@@ -16,8 +16,8 @@ define the options of main function
 parser_arg = argparse.ArgumentParser(description='Data Cleaner')
 # parser_arg.add_argument("-d",'--SetDistance',nargs='?',help="Set the distance boundary to ignore data manully",type=int, default=0)
 # parser_arg.add_argument("-nl",'--NumberToLookBack',nargs='?',help="",type=int, default=0)
-parser_arg.add_argument('-n','--NumberOfTags', help="Set the number of tags in each file", nargs="?",default=2)
-parser_arg.add_argument('-i','--IntervalOfMinutes', help="Set the interval of minutes to seperate", nargs="?",default=10)
+parser_arg.add_argument('-n','--NumberOfTags', help="Set the number of tags in each file", nargs="?",type=int,default=2)
+parser_arg.add_argument('-i','--IntervalOfMinutes', help="Set the interval of minutes to seperate", nargs="?",type=int,default=10)
 parser_arg.add_argument('--data', help="Data path", nargs="?",default='./data/')
 parser_arg.add_argument("--r", help="Result path",nargs="?", default="./results/")
 
@@ -72,14 +72,17 @@ def clustering(df,n_lookback):
 def extend_data(df,IntervalOfMinutes):
     name_minute = 'minute' if IntervalOfMinutes == 1 else str(IntervalOfMinutes)+'minutes'
     modulo = int(60/IntervalOfMinutes)
-
     minutes = df[name_minute] # read minutes column
     hours = df['hour']
     xs = df['x值']
     ys = df['y值']
     df_extended = df.copy()
     for i in range(1,len(minutes)):
-        nb_to_add = (minutes[i] + modulo - minutes[i-1] - 1) % modulo # to consider the first few minutes of next hour
+        current_hour = hours[i-1]
+        dif_hour = hours[i] - current_hour # hour difference
+        nb_to_add = (minutes[i] - minutes[i-1] - 1)
+        if dif_hour >= 1:
+            nb_to_add = nb_to_add + dif_hour*modulo
         if nb_to_add < 0:
             if minutes[i] == modulo-1:
                 continue # go to the next hour
@@ -91,13 +94,15 @@ def extend_data(df,IntervalOfMinutes):
         while(nb_to_add != 0):
             dif = 1/(nb_to_add+1)
             index = i+dif-1
-            add_line = pd.DataFrame({'hour':hours[i-1], name_minute:(minutes[i-1]+max_nb-nb_to_add+1)%modulo, 'x值':xs[i-1], 'y值':ys[i-1]},index=[index])
+            current_minute = (minutes[i-1]+max_nb-nb_to_add+1)%modulo
+            if current_minute == 0:
+                current_hour += 1
+            add_line = pd.DataFrame({'hour':current_hour, name_minute:current_minute, 'x值':xs[i-1], 'y值':ys[i-1]},index=[index])
             df_extended = df_extended.append(add_line,ignore_index=False)
             nb_to_add -= 1
     df_extended = df_extended.sort_index().reset_index(drop=True)
-    print(df_extended)
+    # print(df_extended)
     print("after extended in minutes:",df_extended.shape)
-
     return df_extended
 
 def dataBySecond(df):
@@ -127,7 +132,7 @@ def dataByMinute(df_seconds,path,IntervalOfMinutes,store_dict):
     # df_n = df.groupby(['hour','minute']).first() # first value in eahc minute
     # df_n = df.groupby(['hour','minute']).max() # max value in each minute
     # print(df_n)
-    df_n.plot().figure.savefig(store_dict+  remove_suffix(path,'.xlsx')+'position_groupby_'+str(IntervalOfMinutes)+'_min(s).png')
+    df_n.plot().figure.savefig(store_dict + remove_suffix(path,'.xlsx')+'position_groupby_'+str(IntervalOfMinutes)+'_min(s).png')
     df_n.reset_index(inplace=True)
 
     # To extend the dataframe
