@@ -143,8 +143,9 @@ def dataByMinute(df_seconds,path,IntervalOfMinutes,store_dict):
     # try to store by workbook
     wb = Workbook()
     ws = wb.active
-    for r in dataframe_to_rows(df_n, index=True, header=True):
+    for r in dataframe_to_rows(df_n, index=False, header=True):
         ws.append(r)
+    # ws.delete_rows(ws.min_row+1, 1)
     store_suffix = '_dataByMinute.xlsx' if IntervalOfMinutes == 1 else '_dataBy'+str(IntervalOfMinutes)+'Minutes.xlsx'
     wb.save(store_dict +  remove_suffix(path,'.xlsx')+store_suffix)
     #df_n.to_excel('results/'+  remove_suffix(path,'.xlsx')+'_dataByMinute.xlsx')
