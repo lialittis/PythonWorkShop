@@ -8,10 +8,10 @@ class MQueue:
         self.maxsize = maxsize
 	
     def push(self, value):
-        if self.queue and (self.queue[-1]<value) :
-            self.queue.append(value)
-            if len(self.queue)==maxsize : 
-                self.queue.pop(0)
+        # print("should add : ",value)
+        self.queue.append(value)
+        if len(self.queue)==self.maxsize : 
+            self.queue.pop(-1)
 	
     def pop(self):
         if self.queue:
@@ -23,6 +23,23 @@ class MQueue:
             res = sum(self.queue)/len(self.queue)
         return  res
 
+    def toString(self):
+        string = ""
+        for i in self.queue:
+            string += str(i)
+        print("MQueue is : ",string)
+
+def getSlope(outLoc,points,zone):
+    slope = 0
+    queue_max_slopes = MQueue(maxsize=3)
+    for x,y in points:
+        temp = (x-zone.ux)/(y-zone.ly) if outLoc == "right" else (zone.lx-x)/(y-zone.ly) 
+        if temp > slope:
+            slope = temp
+            queue_max_slopes.push(slope)
+    queue_max_slopes.toString()
+    return queue_max_slopes.average()
+
 
 def delete(x,y,zone):
     print(x,y)
@@ -33,19 +50,19 @@ def delete(x,y,zone):
 
 def MoveToDown(x,y,zone):
     print(x,y)
-    y = zone.uy
+    y = zone.ly
     print(x,y)
     return x,y
 
 def MoveToUp(x,y,zone):
     print(x,y)
-    y = zone.ly
+    y = zone.uy
     print(x,y)
     return x,y
 
 def MoveToLeft(x,y,zone):
     print(x,y)
-    x = zone.ux
+    x = zone.lx
     print(x,y)
     return x,y
 
@@ -100,17 +117,6 @@ def MoveToLeftLinearly(points,zone):
 
 def MoveToRightLinearly(points,zone):
     return points
-
-def getSlope(outLoc,points,zone):
-    slope = 0
-    queue_max_slopes = MQueue(maxsize=3)
-    for x,y in points:
-        temp = (x-zone.ux)/(y-zone.ly) if outLoc == "right" else (zone.lx-x)/(y-zone.ly) 
-        if temp > slope:
-            print("slope",slope)
-            slope = temp
-            queue_max_slopes.push(slope)
-    return queue_max_slopes.average()
 
 def inZone(x,y,zone):
     # special scenario

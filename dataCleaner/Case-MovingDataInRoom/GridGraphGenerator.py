@@ -40,10 +40,10 @@ arguments = parser_arg.parse_args()
 Configuration
 """
 
-max_x = 12
-min_x = -2.5
-max_y = 10
-min_y = -4.5
+max_x = 16
+min_x = -4
+max_y = 12
+min_y = -3
 unit = float(arguments.SizeOfGrid)  #网格单元长宽m
 column_num = int((max_x-min_x)//unit)
 row_num = int((max_y-min_y)//unit)
@@ -58,6 +58,14 @@ year = 2022
 input_path = arguments.path
 res_path = arguments.res
 C = 0
+
+
+#-0/unit,13/unit,-0/unit,14/unit
+x_left = 1.1
+x_right = 18.3
+y_down = 0.8
+y_up = 13.6
+
 
 ##########################################
 # Choose Family
@@ -128,8 +136,8 @@ def shift(family,df):
                             f = helper.methods[m]
                             # deal with simple shift
                             x,y = f(x,y,zone)
-                            df.loc[[index]]['x值'] = x
-                            df.loc[[index]]['y值'] = y
+                            df.at[index,'x值'] = x
+                            df.at[index,'y值'] = y
                         break
             print(recordsInRoom)
             for key in recordsInRoom.keys():
@@ -147,8 +155,8 @@ def shift(family,df):
                 new_points = f(points,zone)
                 for i in range(len(indices)):
                     index = indices[i]
-                    df.loc[[index]]['x值'] = new_points[i][0]
-                    df.loc[[index]]['y值'] = new_points[i][1]
+                    df.at[index,'x值'] = new_points[i][0]
+                    df.at[index,'y值'] = new_points[i][1]
         else:
             continue
     return df
@@ -205,7 +213,7 @@ def createHeatmap(grids,figName):
     with sns.axes_style("white"):
         ax = sns.heatmap(grids, cmap='Reds',linewidths=.0,alpha=.7,xticklabels =False,square = True,yticklabels =False,mask=(grids==0.),center=0.5)
     ax.invert_yaxis()
-    plt.imshow(map_img,zorder = 0, extent=[-0/unit,13/unit,-0/unit,14/unit])
+    plt.imshow(map_img,zorder = 0, extent=[x_left/unit,x_right/unit,y_down/unit,y_up/unit])
     #plt.show()
     fig.savefig(res_path+figName+".png",dpi=300)
     plt.close()
@@ -300,7 +308,7 @@ def createHeatmapByTime(intervals_in_zones,figName):
     ax = sns.heatmap(new_grids, cmap='GnBu',linewidths=0,alpha=0.5,xticklabels =False,square = True,annot=False,yticklabels =False,mask=(new_grids==0.),center=0.5)
     ax.invert_yaxis()
     #plt.show()
-    plt.imshow(map_img,zorder = 0, extent=[-0/unit,13/unit,-0/unit,14/unit])
+    plt.imshow(map_img,zorder = 0, extent=[x_left/unit,x_right/unit,y_down/unit,y_up/unit])
     fig.savefig(res_path+figName+"_temporal.png",dpi=300)
     plt.close(fig)
     return new_grids
@@ -313,7 +321,7 @@ def createHeatmapByTime2(new_grids,figName):
     ax = sns.heatmap(new_grids, cmap='GnBu',linewidths=0,alpha=0.5,xticklabels =False,square = True,annot=True,yticklabels =False,mask=(new_grids==0.),center=0.5)
     ax.invert_yaxis()
     #plt.show()
-    plt.imshow(map_img,zorder = 0, extent=[-0/unit,13/unit,-0/unit,14/unit])
+    plt.imshow(map_img,zorder = 0, extent=[x_left/unit,x_right/unit,y_down/unit,y_up/unit])
     fig.savefig(res_path+figName+"_temporal02.png",dpi=300)
     plt.close(fig)
 
