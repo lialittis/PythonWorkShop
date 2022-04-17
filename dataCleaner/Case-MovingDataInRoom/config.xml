@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<elements>
+	<family name="ParentsOfSun">
+      		<station name="Station 0" x="0" y="0"/>
+		<station name="Station 1" x="" y=""/>
+		<outdoor x = "-0.5" y="3.0"/>
+   		<scenario name="Shift">
+			<zone name="zone 1" place="OutDoor" priority = "1" method="Delete" 
+				xlow="-1000" xup="-0.415"
+				ylow="-1000" yup="1000"/>
+			<zone name="zone 2" place="OutCanteen" priority= "2" method="MoveToDown"
+				xlow="-0.415" xup="1.17"
+				ylow="6.773" yup="1000"/>
+	     		<zone name="zone kitchen" place="InKitchen" priority = "1" method="MoveToLeftLinearly"
+				xlow="1.170" xup="3.6"
+				ylow="6.785" yup="10.44"/>
+	     		<zone name="zone 3" place="OutKitchen" priority="2" method="MoveToDown"
+				xlow="1.17" xup="3.6"
+				ylow="10.44" yup="1000"/>
+		     	<zone name="zone 4" place="OutKitchen" priority="2" method="MoveToLeftDown"
+				xlow="3.6" xup="1000"
+				ylow="10.44" yup="1000"/>
+			<zone name="zone 5" place="OutCanteen" priority="1" method="MoveToLeft"
+				xlow="3.6" xup="1000"
+				ylow="5.37" yup="6.785"/>
+			<zone name="zone 6" place="OutBalcony" priority="1" method="MoveToUp"
+				xlow="-1000" xup="-2.2"
+				ylow="-0.415" yup="6.8"/>
+			<zone name="zone 7" place="OutBedRoom" priority="1" method="MoveToLeft"
+				xlow="4.115" xup="1000"
+				ylow="1.085" yup="5.37"/>
+   		</scenario>
+	</family>
+	<family name="UncleOfSun">
+		<outdoor x = "3" y="5"/>
+		<scenario name="Shift">
+			<zone name="zone 1" place="OutDoor" priority = "1" method="Delete" 
+				xlow="2.85" xup="1000"
+				ylow="4.25" yup="8"/>
+	     		<zone name="zone kitchen" place="InKitchen" priority = "1" method="DoNothing"
+				xlow="1.15" xup="2.85"
+				ylow="8.9" yup="11.4"/>
+			<zone name="zone 2" place="OutKitchen" priority= "2" method="MoveToLeftDown"
+				xlow="2.85" xup="1000"
+				ylow="8.9" yup="1000"/>
+ 	    		<zone name="zone 3" place="OutKitchen" priority="2" method="MoveToDown"
+				xlow="1.15" xup="2.85"
+				ylow="11.4" yup="1000"/>
+		     	<zone name="zone 4" place="OutKitchen" priority="2" method="MoveToDown"
+				xlow="-0.2" xup="1.15"
+				ylow="8.9" yup="1000"/>
+			<zone name="zone balcony" place="InBalcony" priority="1" method="DoNothing"
+				xlow="-0.2" xup="3.7"
+				ylow="-1.8" yup="-0.6"/>
+			<zone name="zone 5" place="OutBalcony" priority="2" method="MoveToLeftUp"
+				xlow="3.7" xup="1000"
+				ylow="-1000" yup="-0.6"/>
+			<zone name="zone 6" place="OutBalcony" priority="2" method="MoveToUp"
+				xlow="-0.2" xup="3.7"
+				ylow="-1000" yup="-1.8"/>
+			<zone name="zone 7" place="OutBalcony" priority="2" method="MoveToRightUp"
+				xlow="-1000" xup="-0.2"
+				ylow="-1000" yup="-1.8"/>
+		     	<zone name="zone living room" place="InLiving" priority="1" method="DoNothing"
+				xlow="-0.2" xup="3.7"
+				ylow="-0.6" yup="4.25"/>
+			<zone name="zone 8" place="OutLiving" priority="2" method="MoveToRight"
+				xlow="-0.7" xup="-0.2"
+				ylow="-0.6" yup="4.25"/>
+			<zone name="zone 9" place="OutLiving" priority="2" method="MoveToLeft"
+				xlow="3.7" xup="1000"
+				ylow="-0.6" yup="4.25"/>
+			<zone name="zone bedroom1" place="InBedroom1" priority="1" method="DoNothing"
+				xlow="-1000" xup="-0.7"
+				ylow="-0.6" yup="4.25"/>
+			<zone name="zone bedroom2" place="InBedroom2" priority="1" method="DoNothing"
+				xlow="-1000" xup="-0.2"
+				ylow="4.25" yup="1000"/>
+		</scenario>
+	</family>
+	<family name="AuntOfSun">
+		<outdoor name="outdoor" x = "2.5" y="7.5"/>
+		<scenario name="Shift">
+			<zone name="zone 1a" place="OutDoor" priority = "1" method="Delete" 
+				xlow="2.05" xup="3.8"
+				ylow="6.93" yup="1000"/>
+	     		<zone name="zone 1b" place="OutDoor" priority = "1" method="Delete" 
+				xlow="3.8" xup="5.35"
+				ylow="8.43" yup="1000"/>
+	     		<zone name="zone kitchen" place="InKitchen" priority = "1" method="DoNothing"
+				xlow="5.35" xup="10.25"
+				ylow="6.93" yup="9.43"/>
+			<zone name="zone 2" place="OutKitchen" priority= "2" method="MoveToRight"
+				xlow="3.8" xup="5.35"
+				ylow="6.93" yup="8.43"/>
+ 	    		<zone name="zone 3" place="OutKitchen" priority="2" method="MoveToDown"
+				xlow="5.35" xup="10.25"
+				ylow="9.43" yup="1000"/>
+			<zone name="zone 3 x" place="OutKitchen" priority="2" method="MoveToLeftDown"
+				xlow="10.25" xup="1000"
+				ylow="9.43" yup="1000"/>
+		     	<zone name="zone 4" place="OutKitchen" priority="2" method="MoveToLeft"
+				xlow="10.25" xup="1000"
+				ylow="6.93" yup="9.54"/>
+			<zone name="zone 5" place="OutBalcony" priority="2" method="MoveToRight"
+				xlow="-1000" xup="-1.9"
+				ylow="-0.82" yup="4.18"/>
+			<zone name="zone 6" place="OutCanteen" priority="2" method="MoveToLeftUp"
+				xlow="-1000" xup="-0.2"
+				ylow="4.18" yup="1000"/>
+			<zone name="zone 7" place="OutCanteen" priority="2" method="MoveToDown"
+				xlow="-0.2" xup="2.05"
+				ylow="6.93" yup="1000"/>
+			<zone name="zone 8" place="OutLiving" priority="2" method="MoveToLeft"
+				xlow="5.35" xup="5.85"
+				ylow="0.43" yup="4.93"/>
+			<zone name="zone bedroom1" place="InBedroom1" priority="1" method="DoNothing"
+				xlow="5.35" xup="1000"
+				ylow="-0.82" yup="0.43"/>
+			<zone name="zone bedroom2" place="InBedroom2" priority="1" method="DoNothing"
+				xlow="5.85" xup="1000"
+				ylow="0.43" yup="4.93"/>
+			<zone name="zone bedroom3" place="InBedroom3" priority="1" method="DoNothing"
+				xlow="5.35" xup="1000"
+				ylow="4.93" yup="6.93"/>
+			<zone name="zone bedroom4" place="InBedroom4" priority="1" method="DoNothing"
+				xlow="-1000" xup="1000"
+				ylow="-1000" yup="-0.82"/>
+		</scenario>
+	</family>
+
+
+
+</elements>

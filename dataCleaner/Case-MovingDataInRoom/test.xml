@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<elements>
+	<family name="ParentsOfSun">
+      		<station name="Station 0" x="0" y="0"/>
+		<station name="Station 1" x="" y=""/>
+   		<scenario name="Shift">
+			<zone name="zone 6" place="OutBalcony" priority="1" method="MoveToUp">
+				xl="-1000" xu="-2.2"/>
+				<y low="-0.415" low="6.8"/>
+	      		</zone>
+			<zone name="zone 7" place="OutBedRoom" priority="1" method="MoveToLeft">
+				<x low="4.115" up="1000"/>
+				<y low="1.085" up="5.37"/>
+	      		</zone>
+   		</scenario>
+	</family>
+</elements>

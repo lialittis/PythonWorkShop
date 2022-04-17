@@ -10,7 +10,7 @@
 
 a. 显示程序参数 ： python cleaner.py -h
 
-usage: cleaner.py [-h] [-n [NUMBEROFTAGS]] [-i [INTERVALOFMINUTES]] [--data [DATA]] [--r [R]]
+usage: cleaner.py [-h] [-n [NUMBEROFTAGS]] [-I [INTERVALOFMINUTES]] [-i [INTERVALOFSECONDS]] [--data [DATA]] [--r [R]]
 
 Data Cleaner
 
@@ -18,17 +18,21 @@ optional arguments:
   -h, --help            show this help message and exit
   -n [NUMBEROFTAGS], --NumberOfTags [NUMBEROFTAGS]
                         Set the number of tags in each file
-  -i [INTERVALOFMINUTES], --IntervalOfMinutes [INTERVALOFMINUTES]
+  -I [INTERVALOFMINUTES], --IntervalOfMinutes [INTERVALOFMINUTES]
                         Set the interval of minutes to seperate
+  -i [INTERVALOFSECONDS], --IntervalOfSeconds [INTERVALOFSECONDS]
+                        Set the interval of seconds to seperate
   --data [DATA]         Data path
   --r [R]               Result path
+
 
 b. 示例 ：
 
 1. python cleaner.py
-（默认tags数 ：2， 默认间隔时间: 10分钟, 默认数据和存储文件夹分别是./data/ 和 ./results/）
+（默认tags数 ：2， 默认间隔时间: 1分钟 和 1秒 两种情况, 默认数据和存储文件夹分别是./data/ 和 ./results/）
 
-2. python cleaner.py -n 3 -i 5 --data ./DataPath/ --r ./ResPath/
+2. python cleaner.py -n 3 -I 5 -i 30 --data ./DataPath/ --r ./ResPath/
+分别记录5分钟为间隔和30秒为间隔的情况
 
 二，生成图像
 
@@ -40,8 +44,7 @@ b. 示例 ：
 
 a. 显示程序参数 ：python GridGraphGenerator.py -h
 
-usage: GridGraphGenerator.py [-h] [-c [MINCOUNTOFPOINTS]] [-s [SIZEOFGRID]] [--figure [FIGURE]]
-                             [--path [PATH]] [--res [RES]]
+usage: GridGraphGenerator.py [-h] [-c [MINCOUNTOFPOINTS]] [-C [MINCOUNTOFPOINTSFORALL]] [-s [SIZEOFGRID]] [--figure [FIGURE]] [--path [PATH]] [--res [RES]] [-second] [-n [INTERVALOFMINUTESORSECONDS]]
 
 Create Grids Graph and Time Line
 
@@ -56,12 +59,24 @@ optional arguments:
   --figure [FIGURE]     Figure path of appartment
   --path [PATH]         Data path
   --res [RES]           Results path for graph generated
+  -second, --bySecond   If you want to read files by Second
+  -n [INTERVALOFMINUTESORSECONDS], --IntervalOfMinutesOrSeconds [INTERVALOFMINUTESORSECONDS]
+                        Set the interval of minutes or seconds as read files
+
 
 b. 示例 ：
 
 1. python GridGraphGenerator.py
 (默认每天每人的网格密度选择下限：3， 文件夹内所有天数和所有出现的人的数据总和的网格密度选择下限：3*文件数量，
-默认网格大小: 0.5米，默认房间底图路径 ：floorplan01.png，默认读取byMinute数据和存储图片的文件夹分别是results和figures）
+默认网格大小: 0.5米，默认房间底图路径 ：floorplan01.png，默认读取byMinute数据和存储图片的文件夹分别是results和figures,
+是否选择按秒记录的数据：默认为否）
 
-2. python GridGraphGenerator.py -c 4 -C 40 -s 1 --figure newfigure.png --path ./DataPath/ --res ./ResPath/
+2. python GridGraphGenerator.py -c 4 -C 40 -s 1 -second
+每天每人的网格密度选择下限：4， 文件夹内所有天数和所有出现的人的数据总和的网格密度选择下限：40
+选择按秒记录的文件，且修改网格大小为1米。
 
+3. python GridGraphGenerator.py -n 5
+选择按5分钟记录的文件
+
+4. python GridGraphGenerator.py -c 4 -C 40 -s 1 --figure newfigure.png --path ./DataPath/ --res ./ResPath/ -second -n 30
+选择按照30秒记录的文件记录

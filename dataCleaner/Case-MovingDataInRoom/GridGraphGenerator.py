@@ -17,6 +17,7 @@ from collections import defaultdict
 import datetime
 from datetime import timedelta
 import argparse
+import helper
 
 """
 define the options of main function
@@ -29,6 +30,9 @@ parser_arg.add_argument('-s','--SizeOfGrid', help="Set the size of each grid", n
 parser_arg.add_argument('--figure',help = 'Figure path of appartment', nargs="?",default='floorplan01.png')
 parser_arg.add_argument('--path', help="Data path", nargs="?",default='./results/')
 parser_arg.add_argument("--res", help="Results path for graph generated",nargs="?", default="./figures/")
+parser_arg.add_argument("-second","--bySecond", help="If you want to read files by Second",action="store_true")
+parser_arg.add_argument("-n",'--IntervalOfMinutesOrSeconds',nargs='?',help="Set the interval of minutes or seconds as read files",type=int, default=1)
+parser_arg.add_argument("-config","--setConfig", help="If you want to set the configuration of some family",action="store_true")
 
 arguments = parser_arg.parse_args()
 
@@ -54,6 +58,13 @@ year = 2022
 input_path = arguments.path
 res_path = arguments.res
 C = 0
+
+##########################################
+# Choose Family
+##########################################
+family_config = helper.chooseFamily()
+
+
 """
 File Path Creation
 """
@@ -73,7 +84,7 @@ def collectData(dict_df,key):
     xs = []
     ys = []
     ts = []
-    for i in range(len(df['hour'])):
+    for i in range(len(df['time'])):
         ts.append(df['time'][i])
         xs.append(df['x值'][i])
         ys.append(df['y值'][i])
@@ -81,11 +92,72 @@ def collectData(dict_df,key):
     data= pd.DataFrame(c)
     return data
 
+##########################################
+# Data pre-view
+##########################################
+
+
+##########################################
+# Data re-clean
+##########################################
+
+"""
+Shift the data/position accoding to the prevision and family configuration
+"""
+def shift(family,df):
+    for scenario in family.scenario:
+        # make sure that in each scenario
+        # there is only one shift linearly
+        recordsInRoom = defaultdict(list)
+        if scenario.name == "Shift":
+            zones = scenario.zones
+            for index, row in df.iterrows():
+                x = row['x值']
+                y = row['y值']
+                m = -1
+                f = -1
+                for zone in scenario.zones:
+                    if helper.inZone(x,y,zone):
+                        m = zone.method
+                        if m == "NoNothing":
+                            break
+                        print("===============> use:"+m)
+                        if m.endswith("Linearly"):
+                            recordsInRoom[(m,zone)].append(index)
+                        else:
+                            f = helper.methods[m]
+                            # deal with simple shift
+                            x,y = f(x,y,zone)
+                            df.loc[[index]]['x值'] = x
+                            df.loc[[index]]['y值'] = y
+                        break
+            print(recordsInRoom)
+            for key in recordsInRoom.keys():
+                indices = recordsInRoom[key]
+                m = key[0]
+                zone = key[1]
+                f = helper.methods[m]
+                temp_df = df.iloc[indices]
+                points = []
+                for i,r in temp_df.iterrows():
+                    # print(i,r)
+                    x = r['x值']
+                    y = r['y值']
+                    points.append([x,y])
+                new_points = f(points,zone)
+                for i in range(len(indices)):
+                    index = indices[i]
+                    df.loc[[index]]['x值'] = new_points[i][0]
+                    df.loc[[index]]['y值'] = new_points[i][1]
+        else:
+            continue
+    return df
+
 def collectDataAllInOne(df):
     xs = []
     ys = []
     ts = []
-    for i in range(len(df['hour'])):
+    for i in range(len(df['time'])):
         ts.append(df['time'][i])
         xs.append(df['x值'][i])
         ys.append(df['y值'][i])
@@ -306,8 +378,20 @@ if __name__ == "__main__":
     """
     Read Data
     """
+    n = arguments.IntervalOfMinutesOrSeconds
+    if n == 1:
+        if arguments.bySecond:
+            end_suffix = '_dataBySecond.xlsx'
+        else:
+            end_suffix = '_dataByMinute.xlsx'
+    else:
+        if arguments.bySecond:
+            end_suffix = '_dataBy'+str(n)+'Seconds.xlsx'
+        else:
+            end_suffix = '_dataBy'+str(n)+'Minutes.xlsx'
+
     # read files
-    files = [f for f in os.listdir(input_path) if f.endswith('_dataByMinute.xlsx')]
+    files = [f for f in os.listdir(input_path) if f.endswith(end_suffix)]
     # read data
     tags_order = []
     all_points_array = []
@@ -323,7 +407,13 @@ if __name__ == "__main__":
 
     for f in files:
         # print(f)
-        df = pd.read_excel(open(input_path+f,'rb'))
+        df = pd.read_excel(open(input_path+f,'rb')) 
+        # shift data
+        if arguments.setConfig :
+            print("==========>Start Shifting<============")
+            df = shift(family_config,df)
+            # print(df_temp)
+
         # one copy of df
         df_copy = df.copy()
 
@@ -383,7 +473,6 @@ if __name__ == "__main__":
     plt.close(fig)
 
     for key in dict_df.keys():
-        print(key)
         data = collectData(dict_df,key)
         groups,grids = createGrid(data)
         # print(grids)
