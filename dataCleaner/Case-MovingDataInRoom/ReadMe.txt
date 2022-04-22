@@ -38,13 +38,15 @@ b. 示例 ：
 
 程序： GridGraphGenerator.py
 
-可以对给定文件夹内的所有byMinute的数据点进行 “依次” 以及 “联合” 成图
+可以对给定文件夹内的所有byMinute的数据点进行 “依次” 以及 “联合” 成图；
+运行程序后需要选择对应的家庭序号；
+-config 参数可以对由于硬件缺陷带来的数据误差进行修正
 
 运行方法 ：
 
 a. 显示程序参数 ：python GridGraphGenerator.py -h
-
 usage: GridGraphGenerator.py [-h] [-c [MINCOUNTOFPOINTS]] [-C [MINCOUNTOFPOINTSFORALL]] [-s [SIZEOFGRID]] [--figure [FIGURE]] [--path [PATH]] [--res [RES]] [-second] [-n [INTERVALOFMINUTESORSECONDS]]
+                             [-config]
 
 Create Grids Graph and Time Line
 
@@ -62,21 +64,21 @@ optional arguments:
   -second, --bySecond   If you want to read files by Second
   -n [INTERVALOFMINUTESORSECONDS], --IntervalOfMinutesOrSeconds [INTERVALOFMINUTESORSECONDS]
                         Set the interval of minutes or seconds as read files
-
+  -config, --setConfig  If you want to set the configuration of some family
 
 b. 示例 ：
 
-1. python GridGraphGenerator.py
+1. python GridGraphGenerator.py -config
 (默认每天每人的网格密度选择下限：3， 文件夹内所有天数和所有出现的人的数据总和的网格密度选择下限：3*文件数量，
 默认网格大小: 0.5米，默认房间底图路径 ：floorplan01.png，默认读取byMinute数据和存储图片的文件夹分别是results和figures,
 是否选择按秒记录的数据：默认为否）
 
-2. python GridGraphGenerator.py -c 4 -C 40 -s 1 -second
+2. python GridGraphGenerator.py -c 4 -C 40 -s 1 -second -config
 每天每人的网格密度选择下限：4， 文件夹内所有天数和所有出现的人的数据总和的网格密度选择下限：40
 选择按秒记录的文件，且修改网格大小为1米。
 
-3. python GridGraphGenerator.py -n 5
+3. python GridGraphGenerator.py -n 5 -config
 选择按5分钟记录的文件
 
-4. python GridGraphGenerator.py -c 4 -C 40 -s 1 --figure newfigure.png --path ./DataPath/ --res ./ResPath/ -second -n 30
+4. python GridGraphGenerator.py -c 4 -C 40 -s 1 --figure newfigure.png --path ./DataPath/ --res ./ResPath/ -second -n 30 -config
 选择按照30秒记录的文件记录

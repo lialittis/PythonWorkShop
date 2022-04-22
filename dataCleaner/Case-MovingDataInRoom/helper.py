@@ -116,6 +116,18 @@ def MoveToLeftLinearly(points,zone):
     return points
 
 def MoveToRightLinearly(points,zone):
+    slope = getSlope("left",points,zone)
+    for i in range(len(points)):
+        x = points[i][0]
+        y = points[i][1]
+        print("old:",x,y)
+        nx = x + (y - zone.ly)*slope
+        print("slope",slope)
+        if nx < zone.lx:
+            points[i][0] = zone.lx
+        else:
+            points[i][0] = min(zone.ux,nx)
+        print("new:",points[i][0],points[i][1])
     return points
 
 def inZone(x,y,zone):
