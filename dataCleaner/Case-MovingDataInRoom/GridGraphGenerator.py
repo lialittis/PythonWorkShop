@@ -129,7 +129,7 @@ def shift(family,df):
                         m = zone.method
                         if m == "NoNothing":
                             break
-                        print("===============> use:"+m)
+                        # print("===============> use:"+m)
                         if m.endswith("Linearly"):
                             recordsInRoom[(m,zone)].append(index)
                         else:
@@ -298,14 +298,16 @@ Heatmap by Time
 def createHeatmapByTime(intervals_in_zones,figName):
     # re-organize the grid
     new_grids = np.zeros([row_num,column_num])
+    zone_grids = np.zeros([row_num,column_num])
     for zone in intervals_in_zones:
         for label in dict_zones[zone]:
             r = (label-1)//column_num  # e.g. (6 - 1) // 12 = 0; (13-1) // 12 = 1; (12-1) // 12 = 0
             c = label - column_num * r - 1 # e.g. 6 - 0 * 12 - 1= 6; 13 - 1 * 12 -1= 0; 12 - 0 * 12 - 1 = 11
             new_grids[r,c] = intervals_in_zones[zone]  # Do a sqrt to make the map clearer !!!
+            zone_grids[r,c] = zone
     #specify size of heatmap
     fig, ax = plt.subplots(figsize=(column_num*0.5,row_num*0.5))
-    ax = sns.heatmap(new_grids, cmap='GnBu',linewidths=0,alpha=0.5,xticklabels =False,square = True,annot=False,yticklabels =False,mask=(new_grids==0.),center=0.5)
+    ax = sns.heatmap(new_grids, cmap='GnBu',linewidths=0,alpha=0.5,xticklabels =False,square = True,annot=zone_grids,yticklabels =False,mask=(new_grids==0.),center=0.5)
     ax.invert_yaxis()
     #plt.show()
     plt.imshow(map_img,zorder = 0, extent=[x_left/unit,x_right/unit,y_down/unit,y_up/unit])
@@ -314,11 +316,11 @@ def createHeatmapByTime(intervals_in_zones,figName):
     return new_grids
 
 """
-show data on the heatmap by time
+Don't show data on the heatmap by time
 """
 def createHeatmapByTime2(new_grids,figName):
     fig, ax = plt.subplots(figsize=(column_num*0.5,row_num*0.5))
-    ax = sns.heatmap(new_grids, cmap='GnBu',linewidths=0,alpha=0.5,xticklabels =False,square = True,annot=True,yticklabels =False,mask=(new_grids==0.),center=0.5)
+    ax = sns.heatmap(new_grids, cmap='GnBu',linewidths=0,alpha=0.5,xticklabels =False,square = True,annot=False,yticklabels =False,mask=(new_grids==0.),center=0.5)
     ax.invert_yaxis()
     #plt.show()
     plt.imshow(map_img,zorder = 0, extent=[x_left/unit,x_right/unit,y_down/unit,y_up/unit])
@@ -328,11 +330,31 @@ def createHeatmapByTime2(new_grids,figName):
 """
 Time line
 """
-def ceateTimeLine(figName,details):
+
+def storeTimeLine(timeline,filename):
+    dict_zone_timelines = defaultdict(list)
+    starts = []
+    ends = []
+    zones = []
+    for s,e,z in timeline:
+        if s == e : continue
+        starts.append(s)
+        ends.append(e)
+        zones.append(z)
+    dict_zone_timelines['Zone'] = zones
+    dict_zone_timelines['Start'] = starts
+    dict_zone_timelines['End'] = ends
+    # print(dict_zone_timelines)
+    df = pd.DataFrame.from_dict(dict_zone_timelines)
+    df.sort_values(by=['Zone'])
+    helper.saveDFtoWB(df,filename)
+
+
+def createTimeLine(figName,details):
     timeline = []
     for zone in details:
         for t in details[zone]:
-            parsed = parse("{}_{}",key)
+            parsed = parse("{}_{}",figName)
             my_date = parsed[1]
             #datetime.time to datetime.datetime
             date = str(dt.datetime.strptime(my_date, '%Y-%m-%d').date())
@@ -346,6 +368,8 @@ def ceateTimeLine(figName,details):
             t0 = pd.to_datetime(date + " " + t[0].strftime("%H:%M:%S"))
             t1 = pd.to_datetime(date + " " + t[1].strftime("%H:%M:%S"))
             timeline.append((t0, t1, zone))
+
+    storeTimeLine(timeline,res_path+figName+"_time.xlsx")
 
     colormapping = {}
     for zone in details:
@@ -489,7 +513,7 @@ if __name__ == "__main__":
         intervals_in_zones,details = getTimeIntervalsForZones(dict_zones,data)
         new_grids = createHeatmapByTime(intervals_in_zones,key)
         createHeatmapByTime2(new_grids,key)
-        ceateTimeLine(key,details)
+        createTimeLine(key,details)
 
     data_allInOne = collectDataAllInOne(df_week)
     groups,grids = createGrid(data_allInOne)
@@ -498,4 +522,4 @@ if __name__ == "__main__":
     intervals_in_zones,details = getTimeIntervalsForZones(dict_zones,data_allInOne)
     new_grids = createHeatmapByTime(intervals_in_zones,"heatmap_allInOne")
     createHeatmapByTime2(new_grids,"heatmap_allInOne")
-
+    print("===========> DONE <===========")

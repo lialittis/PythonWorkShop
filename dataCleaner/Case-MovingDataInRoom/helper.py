@@ -1,5 +1,15 @@
 import setConfigs as cf
 from setConfigs import families
+from openpyxl.utils.dataframe import dataframe_to_rows
+from openpyxl import Workbook
+
+def saveDFtoWB(df_n,filename):
+    # try to store by workbook
+    wb = Workbook()
+    ws = wb.active
+    for r in dataframe_to_rows(df_n, index=False, header=True):
+        ws.append(r)
+    wb.save(filename)
 
 # A special queue, which will record several biggest values
 class MQueue:
@@ -42,62 +52,62 @@ def getSlope(outLoc,points,zone):
 
 
 def delete(x,y,zone):
-    print(x,y)
+    # print(x,y)
     x = zone.outdoor[0]
     y = zone.outdoor[1]
-    print(x,y)
+    # print(x,y)
     return x,y
 
 def MoveToDown(x,y,zone):
-    print(x,y)
+    # print(x,y)
     y = zone.ly
-    print(x,y)
+    # print(x,y)
     return x,y
 
 def MoveToUp(x,y,zone):
-    print(x,y)
+    # print(x,y)
     y = zone.uy
-    print(x,y)
+    # print(x,y)
     return x,y
 
 def MoveToLeft(x,y,zone):
-    print(x,y)
+    # print(x,y)
     x = zone.lx
-    print(x,y)
+    # print(x,y)
     return x,y
 
 def MoveToRight(x,y,zone):
-    print(x,y)
+    # print(x,y)
     x = zone.ux
-    print(x,y)
+    # print(x,y)
     return x,y
 
 def MoveToLeftDown(x,y,zone):
-    print(x,y)
+    # print(x,y)
     x = zone.lx
     y = zone.ly
-    print(x,y)
+    # print(x,y)
     return x,y
 
 def MoveToLeftUp(x,y,zone):
-    print(x,y)
+    # print(x,y)
     x = zone.lx
     y = zone.uy
-    print(x,y)
+    # print(x,y)
     return x,y
 
 def MoveToRightDown(x,y,zone):
-    print(x,y)
+    # print(x,y)
     x = zone.ux
     y = zone.ly
-    print(x,y)
+    # print(x,y)
     return x,y
 
 def MoveToRightUp(x,y,zone):
-    print(x,y)
+    # print(x,y)
     x = zone.ux
     y = zone.uy
-    print(x,y)
+    # print(x,y)
     return x,y
 
 def MoveToLeftLinearly(points,zone):
@@ -105,14 +115,14 @@ def MoveToLeftLinearly(points,zone):
     for i in range(len(points)):
         x = points[i][0]
         y = points[i][1]
-        print("old:",x,y)
+        # print("old:",x,y)
         nx = x - (y - zone.ly)*slope
-        print("slope",slope)
+        # print("slope",slope)
         if nx > zone.ux:
             points[i][0] = zone.ux
         else:
             points[i][0] = max(zone.lx,nx)
-        print("new:",points[i][0],points[i][1])
+        # print("new:",points[i][0],points[i][1])
     return points
 
 def MoveToRightLinearly(points,zone):
@@ -120,14 +130,14 @@ def MoveToRightLinearly(points,zone):
     for i in range(len(points)):
         x = points[i][0]
         y = points[i][1]
-        print("old:",x,y)
+        # print("old:",x,y)
         nx = x + (y - zone.ly)*slope
-        print("slope",slope)
+        # print("slope",slope)
         if nx < zone.lx:
             points[i][0] = zone.lx
         else:
             points[i][0] = min(zone.ux,nx)
-        print("new:",points[i][0],points[i][1])
+        # print("new:",points[i][0],points[i][1])
     return points
 
 def inZone(x,y,zone):
@@ -173,5 +183,5 @@ if __name__ == "__main__":
     chooseFamily()
     f = methods["MoveToUp"]
     x,y = f(1,2,1)
-    print(x,y)
+    # print(x,y)
 
