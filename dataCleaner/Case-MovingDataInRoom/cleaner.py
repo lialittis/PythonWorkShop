@@ -17,8 +17,8 @@ parser_arg = argparse.ArgumentParser(description='Data Cleaner')
 # parser_arg.add_argument("-d",'--SetDistance',nargs='?',help="Set the distance boundary to ignore data manully",type=int, default=0)
 # parser_arg.add_argument("-nl",'--NumberToLookBack',nargs='?',help="",type=int, default=0)
 parser_arg.add_argument('-n','--NumberOfTags', help="Set the number of tags in each file", nargs="?",type=int,default=2)
-parser_arg.add_argument('-I','--IntervalOfMinutes', help="Set the interval of minutes to seperate", nargs="?",type=int,default=1)
-parser_arg.add_argument('-i','--IntervalOfSeconds', help="Set the interval of seconds to seperate", nargs="?",type=int,default=1)
+parser_arg.add_argument('-I','--IntervalOfMinutes', help="Set the interval of minutes to seperate", nargs="?",type=int,default=-1)
+parser_arg.add_argument('-i','--IntervalOfSeconds', help="Set the interval of seconds to seperate", nargs="?",type=int,default=-1)
 parser_arg.add_argument('--data', help="Data path", nargs="?",default='./data/')
 parser_arg.add_argument("--r", help="Result path",nargs="?", default="./results/")
 
@@ -228,10 +228,19 @@ def dataByMinute(df_seconds,path,IntervalOfMinutes,store_dict):
 
 store_dict = arguments.r
 
+I = arguments.IntervalOfMinutes
+i = arguments.IntervalOfSeconds
+
+if I == -1 and i== -1:
+    print('Note : Please define the interval of Minutes or/and interval of Seconds')
+    exit()
+
 for df,path in list_data:
     df_new = clean_zeros(df)
     df_seconds = dataBySecond(df_new)
-    df_seconds_stored = dataBySecondAndStore(df_seconds,path,arguments.IntervalOfSeconds,store_dict)
-    df_minutes = dataByMinute(df_seconds,path,arguments.IntervalOfMinutes,store_dict)
+    if i > 0 :
+        df_seconds_stored = dataBySecondAndStore(df_seconds,path,i,store_dict)
+    if I > 0 :
+        df_minutes = dataByMinute(df_seconds,path,I,store_dict)
     # df_10minutes = dataByMinute(df_seconds,path,arguments.IntervalOfMinutes,store_dict)
 
