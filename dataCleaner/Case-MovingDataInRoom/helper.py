@@ -179,9 +179,9 @@ def inZone(x,y,zone):
             if x>=zone.ux or y <= zone.ly or y >= zone.uy:
                 return False
         
-    #else:
-    if x <= zone.lx or x >= zone.ux or y <= zone.ly or y >= zone.uy:
-        return False
+    else:
+    	if x <= zone.lx or x >= zone.ux or y <= zone.ly or y >= zone.uy:
+    	    return False
     return True
 
 methods ={

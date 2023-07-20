@@ -145,20 +145,50 @@ def extend_data(df,IntervalOfMinutes):
     print("after extended in minutes:",df_extended.shape)
     return df_extended
 
+def chose_extended_data_sec(df_extended,IntervalOfSeconds):
+    df_extended_conditional = df_extended[df_extended['second']%IntervalOfSeconds==0]
+    df_extended_conditional.reset_index(inplace=True,drop=True)
+    return df_extended_conditional
+
+def chose_extended_data_min(df_extended,IntervalOfMinutes):
+    df_extended_conditional = df_extended[df_extended['minute']%IntervalOfMinutes==0]
+    df_extended_conditional.reset_index(inplace=True,drop=True)
+    return df_extended_conditional
+
+
 def dataBySecond(df):
     df_n = df.groupby(df.index).mean() # mean value in each second
     # df_n = df.groupby(df.index).max() # max value in each second
     # df_n = df.groupby(df.index).first() # first value in each second
-    df_n.plot()
-    return df_n
+
+    hours = []
+    mins = []
+    seconds = []
+    for time in df_n.index:
+        hours.append(time.hour)
+        mins.append(time.minute)
+        seconds.append(time.second)
+    df_n['hour'] = hours
+    df_n['minute'] = mins
+    df_n['second'] = seconds
+ 
+    df_n = df_n.groupby(['hour','minute','second']).mean() # mean value in each second (repeated works)
+    df_n.reset_index(inplace=True)
+
+    # extend data directly here
+    df_extended = extend_data_sec(df_n,1)
+    
+    # df_n.plot()
+    return df_extended
 
 def dataBySecondAndStore(df_seconds,path,IntervalOfSeconds,store_dict):
     df = df_seconds.copy()
+    times = []
+    """
     df['time'] = df.index
     hours = []
     mins = []
     seconds = []
-    times = []
     for time in df.index:
         hours.append(time.hour)
         mins.append(time.minute)
@@ -170,11 +200,16 @@ def dataBySecondAndStore(df_seconds,path,IntervalOfSeconds,store_dict):
     df_n = df.groupby(['hour','minute','second']).mean() # mean value in each second
     df_n.reset_index(inplace=True)
 
-    df_n = extend_data_sec(df_n,IntervalOfSeconds)
+    # Extend data second by second
+    df_n = extend_data_sec(df_n,1)
+    """
+    df_n = chose_extended_data_sec(df,IntervalOfSeconds)
+    print("chosen extended data for interval seconds is :\n",df_n.head())
     for i in range(len(df_n['minute'])):
-        times.append(datetime.time(df_n['hour'][i],df_n['minute'][i],df_n['second'][i]*IntervalOfSeconds))
+        times.append(datetime.time(df_n['hour'][i],df_n['minute'][i],df_n['second'][i]))
     df_n.insert(3,"time",times,True)
-    #
+    
+
     # try to store by workbook
     wb = Workbook()
     ws = wb.active
@@ -188,32 +223,36 @@ def dataBySecondAndStore(df_seconds,path,IntervalOfSeconds,store_dict):
 
 def dataByMinute(df_seconds,path,IntervalOfMinutes,store_dict):
     name_minute = 'minute' # if IntervalOfMinutes == 1 else str(IntervalOfMinutes)+'minutes'
+    times = []
 
+    """
     # index to column
     df = df_seconds.copy()
     df['time'] = df.index
     hours = []
     mins = []
-    times = []
 
     for time in df.index:
         hours.append(time.hour)
         mins.append(math.floor(time.minute/IntervalOfMinutes))
     df['hour'] = hours
     df[name_minute] = mins
+    """
+    df_n = chose_extended_data_min(df_seconds,IntervalOfMinutes)
+    print("chosen extended data for interval minutes is :\n",df_n.head())
     # print(df)
-    df_n = df.groupby(['hour',name_minute]).mean() # mean value in each minute
+    df_n = df_n.groupby(['hour',name_minute]).mean() # mean value in each minute
     # df_n = df.groupby(['hour','minute']).first() # first value in eahc minute
     # df_n = df.groupby(['hour','minute']).max() # max value in each minute
     # print(df_n)
     # df_n.plot().figure.savefig(store_dict + remove_suffix(path,'.xlsx')+'position_groupby_'+str(IntervalOfMinutes)+'_min(s).png')
     df_n.reset_index(inplace=True)
 
-    # To extend the dataframe
-    df_n = extend_data(df_n,IntervalOfMinutes)
+    df_n = chose_extended_data_min(df_n,IntervalOfMinutes)
     for i in range(len(df_n[name_minute])):
-        times.append(datetime.time(df_n['hour'][i],df_n[name_minute][i]*IntervalOfMinutes))
+        times.append(datetime.time(df_n['hour'][i],df_n[name_minute][i]))
     df_n.insert(2,"time",times,True)
+    
     # try to store by workbook
     wb = Workbook()
     ws = wb.active
@@ -237,7 +276,9 @@ if I == -1 and i== -1:
 
 for df,path in list_data:
     df_new = clean_zeros(df)
+    print("Extending data...\n")
     df_seconds = dataBySecond(df_new)
+    print("Extended data is :\n",df_seconds.head(20))
     if i > 0 :
         df_seconds_stored = dataBySecondAndStore(df_seconds,path,i,store_dict)
     if I > 0 :
